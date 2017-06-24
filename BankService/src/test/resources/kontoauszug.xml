@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Document>
+	<BkToCstmrDbtCdtNtfctn>
+
+		<GrpHdr>
+			<MsgId>MSG1</MsgId>
+			<CreDtTm>JJJJ-MM-TTThh:mm:ss+01:00</CreDtTm>
+			<MsgRcpt>
+				<Nm>Name BANK KUNDE</Nm>
+				<Id>
+					<OrgId>
+						<Othr>
+							<Id>AAAADE01</Id>
+							<Issr>EBICS</Issr>
+						</Othr>
+					</OrgId>
+				</Id>
+			</MsgRcpt>
+			<MsgPgntn>
+				<PgNb>1</PgNb>
+				<LastPgInd>true</LastPgInd>
+			</MsgPgntn>
+		</GrpHdr>
+
+		<Ntfctn>
+			<Id>EZ1</Id>
+			<CreDtTm>JJJJ-MM-TTThh:mm:ss+01:00</CreDtTm>
+			<Acct>
+				<Id>
+					<IBAN>DE86201207003100778899</IBAN>
+				</Id>
+				<Ccy>EUR</Ccy>
+				<Ownr>
+					<Nm>Name BANK KUNDE</Nm>
+				</Ownr>
+				<Svcr>
+					<FinInstnId>
+						<BIC>AAAADEZZXXX</BIC>
+						<Othr>
+							<Id>123456789</Id>
+							<Issr>UmsStId</Issr>
+						</Othr>
+					</FinInstnId>
+				</Svcr>
+			</Acct>
+			<Ntry>
+				<Amt Ccy="EUR">666.66</Amt>
+				<CdtDbtInd>CRDT</CdtDbtInd>
+				<Sts>BOOK</Sts>
+				<BookgDt>
+					<Dt>JJJJ-MM-TT</Dt>
+				</BookgDt>
+				<ValDt>
+					<Dt>JJJJ-MM-TT</Dt>
+				</ValDt>
+				<AcctSvcrRef>6789</AcctSvcrRef>
+				<NtryDtls>
+					<Btch>
+						<NbOfTxs>2</NbOfTxs>
+					</Btch>
+					<TxDtls>
+						<Refs>
+							<AcctSvcrRef>AABBBCC00001234</AcctSvcrRef>
+							<EndToEndId>NOTPROVIDED</EndToEndId>
+							<TxId>ICFSCTJJMMTT0000000DE00000000012345</TxId>
+						</Refs>
+						<AmtDtls>
+							<TxAmt>
+								<Amt Ccy="EUR">543.21</Amt>
+							</TxAmt>
+						</AmtDtls>
+						<BkTxCd>
+							<Prtry>
+								<Cd>ABCD123</Cd>
+								<Issr>ZKA</Issr>
+							</Prtry>
+						</BkTxCd>
+						<RltdPties>
+							<Dbtr>
+								<Nm>Name SEPA Debtor</Nm>
+								<PstlAdr>
+									<Ctry>DE</Ctry>
+									<AdrLine>Postfach 0000 00000 Nirgendwo</AdrLine>
+									<AdrLine>GERMANY</AdrLine>
+								</PstlAdr>
+							</Dbtr>
+							<DbtrAcct>
+								<Id>
+									<IBAN>DE99111111111111111111</IBAN>
+								</Id>
+							</DbtrAcct>
+							<Cdtr>
+								<Nm>Name SEPA Creditor 1</Nm>
+							</Cdtr>
+							<CdtrAcct>
+								<Id>
+									<IBAN>DE55444444443333333333</IBAN>
+								</Id>
+							</CdtrAcct>
+						</RltdPties>
+						<RltdAgts>
+							<DbtrAgt>
+								<FinInstnId>
+									<BIC>BBBBDEYYXXX</BIC>
+								</FinInstnId>
+							</DbtrAgt>
+							<CdtrAgt>
+								<FinInstnId>
+									<BIC>AAAADEZZXXX</BIC>
+								</FinInstnId>
+							</CdtrAgt>
+						</RltdAgts>
+						<RmtInf>
+							<Ustrd>SEPA CAMT.054 Nr. 1</Ustrd>
+						</RmtInf>
+						<AddtlTxInf>SEPA-Ueberweisung</AddtlTxInf>
+					</TxDtls>
+
+					<TxDtls>
+						<Refs>
+							<AcctSvcrRef>AABBBCC00001235</AcctSvcrRef>
+							<EndToEndId>NOTPROVIDED</EndToEndId>
+							<TxId>ICFSCTJJMMTT0000000DE00000000012346</TxId>
+						</Refs>
+						<AmtDtls>
+							<TxAmt>
+								<Amt Ccy="EUR">123.45</Amt>
+							</TxAmt>
+						</AmtDtls>
+						<BkTxCd>
+							<Prtry>
+								<Cd>ABCD123</Cd>
+								<Issr>ZKA</Issr>
+							</Prtry>
+						</BkTxCd>
+						<RltdPties>
+							<Dbtr>
+								<Nm>Name SEPA Debtor</Nm>
+								<PstlAdr>
+									<Ctry>DE</Ctry>
+									<AdrLine>Postfach 0000 00000 Nirgendwo</AdrLine>
+									<AdrLine>GERMANY</AdrLine>
+								</PstlAdr>
+							</Dbtr>
+							<DbtrAcct>
+								<Id>
+									<IBAN>DE88111111111111111111</IBAN>
+								</Id>
+							</DbtrAcct>
+							<Cdtr>
+								<Nm>Name SEPA Creditor 2</Nm>
+							</Cdtr>
+							<CdtrAcct>
+								<Id>
+									<IBAN>DE88777777776666666666</IBAN>
+								</Id>
+							</CdtrAcct>
+						</RltdPties>
+						<RltdAgts>
+							<DbtrAgt>
+								<FinInstnId>
+									<BIC>BBBBDEYYXXX</BIC>
+								</FinInstnId>
+							</DbtrAgt>
+							<CdtrAgt>
+								<FinInstnId>
+									<BIC>AAAADEZZXXX</BIC>
+								</FinInstnId>
+							</CdtrAgt>
+						</RltdAgts>
+						<RmtInf>
+							<Ustrd>SEPA CAMT.054 Nr. 2</Ustrd>
+						</RmtInf>
+						<AddtlTxInf>SEPA-Ueberweisung</AddtlTxInf>
+					</TxDtls>
+				</NtryDtls>
+			</Ntry>
+		</Ntfctn>
+	</BkToCstmrDbtCdtNtfctn>
+</Document>
