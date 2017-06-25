@@ -1,7 +1,6 @@
 package tests;
 
 import static org.hamcrest.CoreMatchers.is;
-
 import static org.junit.Assert.assertThat;
 
 import java.io.File;
@@ -13,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,9 +27,12 @@ import org.springframework.messaging.support.ChannelInterceptorAdapter;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import repositories.EinzahlungRepository;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = flow.BankEingangsApplication.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+//@DataJpaTest
 public class GesamtTest {
 
     @Autowired
@@ -48,7 +51,7 @@ public class GesamtTest {
     @Qualifier("inboundOutDirectory")
     public File inboundOutDirectory;
 
-   // @After
+    @After
     public void tearDown() throws Exception {
         TestUtils.deleteRecursive(inboundReadDirectory);
         TestUtils.deleteRecursive(inboundProcessedDirectory);
@@ -69,19 +72,21 @@ public class GesamtTest {
 
     @Before
     public void createFiles() throws IOException, InterruptedException {
-          System.out.println(Paths.get("./src/main/resources/kontoauszug.xml")
-                .toAbsolutePath().toString());
         Files.copy(Paths.get("./src/test/resources/kontoauszug.xml"),
                 new FileOutputStream(inboundReadDirectory.getAbsolutePath()
                         + "/kontoauszug.xml"));
-        // createFile("file1.txt", "content");
-        // createFile("file2.txt", "another file");
     }
 
     @Autowired
     @Qualifier("fileInputChannel")
     public DirectChannel filePollingChannel;
 
+
+    @Autowired
+    public EinzahlungRepository einzahlungRepository;
+
+    
+    
     @Test
     public void pollFindsValidFile() throws Exception {
 
@@ -90,7 +95,6 @@ public class GesamtTest {
             @Override
             public void postSend(Message message, MessageChannel channel,
                     boolean sent) {
-                System.out.println(" Latch ");
                 latch.countDown();
                 super.postSend(message, channel, sent);
             }
@@ -101,6 +105,7 @@ public class GesamtTest {
         TestUtils.assertThatDirectoryIsEmpty(inboundFailedDirectory);
         TestUtils.assertThatDirectoryHasFiles(inboundProcessedDirectory, 1);
         TestUtils.assertThatDirectoryHasFiles(inboundOutDirectory, 1);
+        assertThat(einzahlungRepository.anzahlDerEinzahlungen(),is(1));
     }
 
 }
