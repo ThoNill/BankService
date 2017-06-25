@@ -27,12 +27,12 @@ public class InDieDatei extends AbstractTransformer {
 
     @Override
     protected Object doTransform(Message<?> message) throws Exception {
-        LOG.debug("Ausgabe in InDieDatei " + message.getPayload());
         List<Einzahlung> einzahlungen = (List<Einzahlung>) message
                 .getPayload();
         Boolean inDieDatenbank = (Boolean) message.getHeaders().get(
                 "inDatenbank");
         if (!inDieDatenbank) {
+            LOG.debug("Ausgabe in InDieDatei " + message.getPayload());
 
             File directory = inboundOutDirectory;
             long zeit = new Date().getTime();
@@ -41,7 +41,7 @@ public class InDieDatei extends AbstractTransformer {
                     + "ausgabe" + zeit + "_" + nummer + ".txt";
            
             try (FileWriter writer = new FileWriter(new File(fileName))) {
-                LOG.debug("Ausgabe in " + fileName);
+                LOG.debug("Ausgabe von " + einzahlungen.size() + " Einzahlungen");
                 for (Einzahlung einzahlung : einzahlungen) {
                     LOG.debug("Schreibe Einzahlung " + einzahlung);
                     String ausgabeZeile = String.format("%s;%s;%s;%S",einzahlung.getTransaktion(),einzahlung.getDebitorIBAN(),einzahlung.getKreditorIBAN(),einzahlung.getBetrag().getNumber());
