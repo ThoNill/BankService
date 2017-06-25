@@ -2,8 +2,6 @@ package flow;
 
 import java.io.File;
 import java.io.IOException;
-
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -162,11 +160,7 @@ public class BankEingangsApplication {
         return new InDieDatei(inboundOutDirectory);
     }
 
-
-    @Autowired
-    public EntityManager entityManager;
-
-    
+   
     @Bean
     public InDieDatenbank schreibeInDieDatenbank() {
         return new InDieDatenbank();
