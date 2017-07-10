@@ -1,7 +1,10 @@
 package flow;
 
 import java.io.File;
+
 import java.io.IOException;
+import java.util.List;
+
 import javax.persistence.EntityManagerFactory;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,10 +34,13 @@ import org.springframework.integration.transaction.TransactionSynchronizationFac
 import org.springframework.integration.transaction.TransactionSynchronizationProcessor;
 import org.springframework.integration.xml.transformer.UnmarshallingTransformer;
 import org.springframework.integration.xml.transformer.XsltPayloadTransformer;
+import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
+import org.w3c.dom.Document;
 
+import repositories.EinzahlungRepository;
 import data.Datei;
 import data.Einzahlung;
 import data.JaxbBICAdapter;
@@ -43,12 +49,15 @@ import data.JaxbIBANAdapter;
 import data.JaxbMonetaryAmountAdapter;
 import data.KontoAuszug;
 
+import javax.xml.transform.dom.DOMResult;
+import org.w3c.dom.Node;
+
 @SpringBootApplication
 @ComponentScan({ "repositories", "services", "data", "flow" })
 @IntegrationComponentScan({ "repositories", "services", "data", "flow" })
 @EnableJpaRepositories({ "repositories" })
 @EntityScan("data")
-public class BankEingangsApplication {
+public class BankEingangMitLambdas {
 
     @Autowired
     @Qualifier("inboundReadDirectory")
@@ -69,35 +78,56 @@ public class BankEingangsApplication {
     @Value("kontoauszug.xsl")
     private Resource xsl;
 
+    @Autowired
+    public EinzahlungRepository einzahlungRepository;
+
     @Bean
     public MessageChannel fileInputChannel() {
         return new DirectChannel();
     }
+
+    // .channel("wiederZusammen")
 
     @Bean
     public IntegrationFlow processFileFlow(TaskExecutor taskExecutor,
             MessageSource<File> fileReadingMessageSource,
             ApplicationContext applicationContext,
             Jaxb2Marshaller einzahlungUnMarshaller,
-            KontoauszugsSplitter kontoauszugsSplitter,
-            InDieDatei schreibeInDieDatei,
-            InDieDatenbank schreibeInDieDatenbank) {
+            InDieDateiAggregator inDieDatei) {
         return IntegrationFlows
                 .from(fileReadingMessageSource,
                         s -> s.poller(getPoller(taskExecutor,
                                 applicationContext)))
                 .channel("fileInputChannel")
                 .transform(new XsltPayloadTransformer(this.xsl))
-                .transform(new Result2DocumentTransformer())
+                .<DOMResult,Node> transform(result -> result.getNode())
                 .transform(new UnmarshallingTransformer(einzahlungUnMarshaller))
-                .split(kontoauszugsSplitter).transform(schreibeInDieDatenbank)
-                .transform(schreibeInDieDatei).aggregate() 
-                .handle("abschlussProcessor", "process").get();
-    }
+                .channel("vorDemSplittenChannel")
+                .split(Datei.class, d -> d.getKontoauszug().getEinzahlungen())
+                .channel("nachDemSplittenChannel")
+                .transform(inDieDatei,"zaehlen")
+                .<Einzahlung, Boolean> route(
+                        e -> e.sollExportiertWerden(),
+                        mapping -> mapping
+                                .subFlowMapping(
+                                        Boolean.FALSE,
+                                        sf -> sf
+                                        .channel("sollInDieDatenbank")
+                                        .<Einzahlung, Einzahlung> transform(e -> einzahlungRepository.save(e) )
+                                )
 
-    @Bean
-    AbschlussProcessor abschlussProcessor() {
-        return new AbschlussProcessor();
+                                .subFlowMapping(
+                                        Boolean.TRUE,
+                                        sf -> sf
+                                         .channel("sollInDieDatei")
+                                         .aggregate(a -> a.processor(inDieDatei))
+                                )
+
+                )
+
+                .channel("wiederZusammen")
+                .handle(x -> System.out.println("im Handler: " + x.toString()))
+                .get();
     }
 
     @Bean
@@ -123,13 +153,12 @@ public class BankEingangsApplication {
                 .transactional(transactionManager());
     }
 
-    
     @Autowired
     EntityManagerFactory entityManagerFactory;
-    
+
     @Bean
     JpaTransactionManager transactionManager() {
-           return new JpaTransactionManager(entityManagerFactory);
+        return new JpaTransactionManager(entityManagerFactory);
     }
 
     @Bean
@@ -149,28 +178,9 @@ public class BankEingangsApplication {
                 new JaxbIBANAdapter(), new JaxbMonetaryAmountAdapter());
         return unmarshaller;
     }
-
+    
     @Bean
-    KontoauszugsSplitter kontoauszugsSplitter() {
-        return new KontoauszugsSplitter();
+    public InDieDateiAggregator inDieDatei() {
+        return new InDieDateiAggregator(inboundOutDirectory);
     }
-
-    @Bean
-    public InDieDatei schreibeInDieDatei() {
-        return new InDieDatei(inboundOutDirectory);
-    }
-
-   
-    @Bean
-    public InDieDatenbank schreibeInDieDatenbank() {
-        return new InDieDatenbank();
-    }
-
-    /*--------------------------------------------*/
-
-    public static void main(String[] args) throws IOException,
-            InterruptedException {
-        SpringApplication.run(BankEingangsApplication.class, args);
-    }
-
 }

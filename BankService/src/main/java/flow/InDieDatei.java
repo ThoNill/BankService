@@ -17,7 +17,7 @@ import data.Einzahlung;
 public class InDieDatei extends AbstractTransformer {
     Logger LOG = LogManager.getLogger(InDieDatei.class);
     
-    private String wo;
+ 
     private File inboundOutDirectory;
     private AtomicInteger counter = new AtomicInteger();
 
