@@ -62,6 +62,64 @@
 						<Refs>
 							<AcctSvcrRef>AABBBCC00001234</AcctSvcrRef>
 							<EndToEndId>NOTPROVIDED</EndToEndId>
+							<TxId>ICFSCTJJMMTT0000000DE000</TxId>
+						</Refs>
+						<AmtDtls>
+							<TxAmt>
+								<Amt Ccy="EUR">500.21</Amt>
+							</TxAmt>
+						</AmtDtls>
+						<BkTxCd>
+							<Prtry>
+								<Cd>ABCD123</Cd>
+								<Issr>ZKA</Issr>
+							</Prtry>
+						</BkTxCd>
+						<RltdPties>
+							<Dbtr>
+								<Nm>Name SEPA Debtor</Nm>
+								<PstlAdr>
+									<Ctry>DE</Ctry>
+									<AdrLine>Postfach 0000 00000 Nirgendwo</AdrLine>
+									<AdrLine>GERMANY</AdrLine>
+								</PstlAdr>
+							</Dbtr>
+							<DbtrAcct>
+								<Id>
+									<IBAN>DE99111111111111111111</IBAN>
+								</Id>
+							</DbtrAcct>
+							<Cdtr>
+								<Nm>Name SEPA Creditor 1</Nm>
+							</Cdtr>
+							<CdtrAcct>
+								<Id>
+									<IBAN>DE55444444443333333333</IBAN>
+								</Id>
+							</CdtrAcct>
+						</RltdPties>
+						<RltdAgts>
+							<DbtrAgt>
+								<FinInstnId>
+									<BIC>BBBBDEYYXXX</BIC>
+								</FinInstnId>
+							</DbtrAgt>
+							<CdtrAgt>
+								<FinInstnId>
+									<BIC>AAAADEZZXXX</BIC>
+								</FinInstnId>
+							</CdtrAgt>
+						</RltdAgts>
+						<RmtInf>
+							<Ustrd>SEPA CAMT.054 Nr. 1</Ustrd>
+						</RmtInf>
+						<AddtlTxInf>SEPA-Ueberweisung</AddtlTxInf>
+					</TxDtls>
+
+					<TxDtls>
+						<Refs>
+							<AcctSvcrRef>AABBBCC00001234</AcctSvcrRef>
+							<EndToEndId>NOTPROVIDED</EndToEndId>
 							<TxId>ICFSCTJJMMTT0000000DE00000000012345</TxId>
 						</Refs>
 						<AmtDtls>
@@ -115,6 +173,7 @@
 						</RmtInf>
 						<AddtlTxInf>SEPA-Ueberweisung</AddtlTxInf>
 					</TxDtls>
+
 
 					<TxDtls>
 						<Refs>

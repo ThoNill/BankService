@@ -1,7 +1,6 @@
 package flow;
 
 import java.io.File;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -16,6 +15,7 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.Resource;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -50,6 +50,7 @@ import data.JaxbMonetaryAmountAdapter;
 import data.KontoAuszug;
 
 import javax.xml.transform.dom.DOMResult;
+
 import org.w3c.dom.Node;
 
 @SpringBootApplication
@@ -103,9 +104,9 @@ public class BankEingangMitLambdas {
                 .<DOMResult,Node> transform(result -> result.getNode())
                 .transform(new UnmarshallingTransformer(einzahlungUnMarshaller))
                 .channel("vorDemSplittenChannel")
+                .transform(inDieDatei,"zaehlen")
                 .split(Datei.class, d -> d.getKontoauszug().getEinzahlungen())
                 .channel("nachDemSplittenChannel")
-                .transform(inDieDatei,"zaehlen")
                 .<Einzahlung, Boolean> route(
                         e -> e.sollExportiertWerden(),
                         mapping -> mapping
@@ -180,6 +181,7 @@ public class BankEingangMitLambdas {
     }
     
     @Bean
+  //  @Scope(scopeName="prototype")
     public InDieDateiAggregator inDieDatei() {
         return new InDieDateiAggregator(inboundOutDirectory);
     }

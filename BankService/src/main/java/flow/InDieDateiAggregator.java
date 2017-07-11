@@ -18,26 +18,31 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.integration.annotation.ReleaseStrategy;
 
 import repositories.EinzahlungRepository;
+import data.Datei;
 import data.Einzahlung;
+import data.KontoAuszug;
 
 public class InDieDateiAggregator {
     Logger LOG = LogManager.getLogger(InDieDateiAggregator.class);
 
-    private int anzahl=0;
-    private int bisherDa=0;
+    private int anzahl = 0;
+    private int bisherDa = 0;
     private File inboundOutDirectory;
     private AtomicInteger counter = new AtomicInteger();
 
-    public InDieDateiAggregator(File inboundOutDirectory) {
+    public InDieDateiAggregator(File inboundOutDirectory) 
         this.inboundOutDirectory = inboundOutDirectory;
     }
-    
-  //  @Transformer
-    public Einzahlung zaehlen(Einzahlung einzahlung) {
-        if (einzahlung.sollExportiertWerden()) {
-            anzahl++;
+
+    // @Transformer
+    public Datei zaehlen(Datei d) {
+        for (Einzahlung einzahlung : d.getKontoauszug().getEinzahlungen()) {
+            if (einzahlung.sollExportiertWerden()) {
+                anzahl++;
+            }
         }
-        return einzahlung;
+        LOG.debug("Gesamtanzahl Einzahlung in die Datei " + anzahl);
+        return d;
     }
 
     @Aggregator
@@ -68,7 +73,8 @@ public class InDieDateiAggregator {
 
     @ReleaseStrategy
     public boolean completionChecker(List<Message<?>> messages) {
-      bisherDa++;  
-      return anzahl >= bisherDa;
+        bisherDa++;
+        LOG.debug("Gesamtanzahl Einzahlung in die Datei " + anzahl + " im Vergleich zu " + bisherDa);
+        return anzahl <= bisherDa;
     }
 }
