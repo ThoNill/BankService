@@ -30,7 +30,7 @@ public class InDieDateiAggregator {
     private File inboundOutDirectory;
     private AtomicInteger counter = new AtomicInteger();
 
-    public InDieDateiAggregator(File inboundOutDirectory) 
+    public InDieDateiAggregator(File inboundOutDirectory) {
         this.inboundOutDirectory = inboundOutDirectory;
     }
 
