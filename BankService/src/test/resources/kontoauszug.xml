@@ -22,7 +22,7 @@
 			</MsgPgntn>
 		</GrpHdr>
 
-		<Ntfctn>
+		<Ntfctn> <!--  Beginn einer Notifikation Sammelbuchungsinfo  -->
 			<Id>EZ1</Id>
 			<CreDtTm>JJJJ-MM-TTThh:mm:ss+01:00</CreDtTm>
 			<Acct>
@@ -43,7 +43,8 @@
 					</FinInstnId>
 				</Svcr>
 			</Acct>
-			<Ntry>
+			<Ntry> <!--  Beginn einer Sammelbuchung  -->
+			    
 				<Amt Ccy="EUR">666.66</Amt>
 				<CdtDbtInd>CRDT</CdtDbtInd>
 				<Sts>BOOK</Sts>
@@ -54,11 +55,11 @@
 					<Dt>JJJJ-MM-TT</Dt>
 				</ValDt>
 				<AcctSvcrRef>6789</AcctSvcrRef>
-				<NtryDtls>
+				<NtryDtls> 
 					<Btch>
 						<NbOfTxs>2</NbOfTxs>
 					</Btch>
-					<TxDtls>
+					<TxDtls> <!--  Einzelne Transaktion innerhalb einer Sammelbuchung -->
 						<Refs>
 							<AcctSvcrRef>AABBBCC00001234</AcctSvcrRef>
 							<EndToEndId>NOTPROVIDED</EndToEndId>

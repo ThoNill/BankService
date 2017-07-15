@@ -1,16 +1,11 @@
 package tests;
 
 import static org.hamcrest.CoreMatchers.is;
-
 import static org.junit.Assert.assertThat;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -35,49 +30,7 @@ import repositories.EinzahlungRepository;
 @SpringBootTest(classes = flow.BankEingangMitKlassen.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 //@DataJpaTest
-public class BankEingangMitKlassenTest {
-
-    @Autowired
-    @Qualifier("inboundReadDirectory")
-    public File inboundReadDirectory;
-
-    @Autowired
-    @Qualifier("inboundProcessedDirectory")
-    public File inboundProcessedDirectory;
-
-    @Autowired
-    @Qualifier("inboundFailedDirectory")
-    public File inboundFailedDirectory;
-
-    @Autowired
-    @Qualifier("inboundOutDirectory")
-    public File inboundOutDirectory;
-
-    @After
-    public void tearDown() throws Exception {
-        TestUtils.deleteRecursive(inboundReadDirectory);
-        TestUtils.deleteRecursive(inboundProcessedDirectory);
-        TestUtils.deleteRecursive(inboundFailedDirectory);
-        TestUtils.deleteRecursive(inboundOutDirectory);
-    }
-
-    private void createFile(String name, String inhalt) {
-        try {
-            PrintWriter writer = new PrintWriter(
-                    inboundReadDirectory.getAbsolutePath() + "/" + name);
-            writer.append(inhalt);
-            writer.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Before
-    public void createFiles() throws IOException, InterruptedException {
-        Files.copy(Paths.get("./src/test/resources/kontoauszug.xml"),
-                new FileOutputStream(inboundReadDirectory.getAbsolutePath()
-                        + "/kontoauszug.xml"));
-    }
+public class BankEingangMitKlassenTest extends FlowTestBasis {
 
     @Autowired
     @Qualifier("fileInputChannel")
@@ -87,8 +40,7 @@ public class BankEingangMitKlassenTest {
     @Autowired
     public EinzahlungRepository einzahlungRepository;
 
-    
-    
+  
     @Test
     public void pollFindsValidFile() throws Exception {
 
@@ -109,5 +61,4 @@ public class BankEingangMitKlassenTest {
         TestUtils.assertThatDirectoryHasFiles(inboundOutDirectory, 1);
         assertThat(einzahlungRepository.anzahlDerEinzahlungen(),is(1));
     }
-
 }

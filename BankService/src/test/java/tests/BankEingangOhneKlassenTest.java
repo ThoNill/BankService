@@ -87,7 +87,7 @@ public class BankEingangOhneKlassenTest {
     public EinzahlungRepository einzahlungRepository;
 
     
-    
+    @Ignore
     @Test
     public void pollFindsValidFile() throws Exception {
 

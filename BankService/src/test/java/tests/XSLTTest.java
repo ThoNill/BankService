@@ -31,11 +31,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import repositories.EinzahlungRepository;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = flow.BankEingangMitLambdas.class)
+@SpringBootTest(classes = flow.XSLTAnwenden.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 // @DataJpaTest
-public class BankEingangMitLambdasTest {
-
+public class XSLTTest {
     @Autowired
     @Qualifier("inboundReadDirectory")
     public File inboundReadDirectory;
@@ -54,10 +53,6 @@ public class BankEingangMitLambdasTest {
 
     @After
     public void tearDown() throws Exception {
-        TestUtils.deleteRecursive(inboundReadDirectory);
-        TestUtils.deleteRecursive(inboundProcessedDirectory);
-        TestUtils.deleteRecursive(inboundFailedDirectory);
-        TestUtils.deleteRecursive(inboundOutDirectory);
     }
 
     private void createFile(String name, String inhalt) {
@@ -82,30 +77,6 @@ public class BankEingangMitLambdasTest {
     @Qualifier("fileInputChannel")
     public DirectChannel filePollingChannel;
 
-    @Autowired
-    @Qualifier("vorDemSplittenChannel")
-    public DirectChannel vorDemSplittenChannel;
-
-    @Autowired
-    @Qualifier("nachDemSplittenChannel")
-    public DirectChannel nachDemSplittenChannel;
-
-    @Autowired
-    @Qualifier("sollInDieDatenbank")
-    public DirectChannel sollInDieDatenbankChannel;
-
-    @Autowired
-    @Qualifier("sollInDieDatei")
-    public DirectChannel sollInDieDateiChannel;
-
-    @Autowired
-    @Qualifier("wiederZusammen")
-    public DirectChannel wiederZusammenChannel;
-
-    @Autowired
-    public EinzahlungRepository einzahlungRepository;
-
-    @Ignore
     @Test
     public void pollFindsValidFile() throws Exception {
 
@@ -119,58 +90,9 @@ public class BankEingangMitLambdasTest {
             }
         });
 
-        vorDemSplittenChannel.addInterceptor(new ChannelInterceptorAdapter() {
-            @Override
-            public void postSend(Message message, MessageChannel channel,
-                    boolean sent) {
-                System.out.println("vor dem Splitten: " + message);
-                super.postSend(message, channel, sent);
-            }
-        });
-
-        nachDemSplittenChannel.addInterceptor(new ChannelInterceptorAdapter() {
-            @Override
-            public void postSend(Message message, MessageChannel channel,
-                    boolean sent) {
-                System.out.println("nach dem Splitten: " + message);
-                super.postSend(message, channel, sent);
-            }
-        });
-
-        sollInDieDatenbankChannel
-                .addInterceptor(new ChannelInterceptorAdapter() {
-                    @Override
-                    public void postSend(Message message,
-                            MessageChannel channel, boolean sent) {
-                        System.out.println("soll in die Datenbank: " + message);
-                        super.postSend(message, channel, sent);
-                    }
-                });
-
-        sollInDieDateiChannel.addInterceptor(new ChannelInterceptorAdapter() {
-            @Override
-            public void postSend(Message message, MessageChannel channel,
-                    boolean sent) {
-                System.out.println("in die Datei: " + message);
-                super.postSend(message, channel, sent);
-            }
-        });
-
-        wiederZusammenChannel.addInterceptor(new ChannelInterceptorAdapter() {
-            @Override
-            public void postSend(Message message, MessageChannel channel,
-                    boolean sent) {
-                System.out.println("wieder zusammen: " + message);
-                super.postSend(message, channel, sent);
-            }
-        });
-
         assertThat(latch.await(10, TimeUnit.SECONDS), is(true));
         TestUtils.assertThatDirectoryIsEmpty(inboundReadDirectory);
-        TestUtils.assertThatDirectoryIsEmpty(inboundFailedDirectory);
         TestUtils.assertThatDirectoryHasFiles(inboundProcessedDirectory, 1);
-        TestUtils.assertThatDirectoryHasFiles(inboundOutDirectory, 1);
-        assertThat(einzahlungRepository.anzahlDerEinzahlungen(), is(1));
     }
 
 }
