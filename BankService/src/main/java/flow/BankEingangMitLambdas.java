@@ -104,7 +104,6 @@ public class BankEingangMitLambdas {
                 .<DOMResult,Node> transform(result -> result.getNode())
                 .transform(new UnmarshallingTransformer(einzahlungUnMarshaller))
                 .channel("vorDemSplittenChannel")
-                .transform(inDieDatei,"zaehlen")
                 .split(Datei.class, d -> d.getKontoauszug().getEinzahlungen())
                 .channel("nachDemSplittenChannel")
                 .<Einzahlung, Boolean> route(
@@ -121,11 +120,11 @@ public class BankEingangMitLambdas {
                                         Boolean.TRUE,
                                         sf -> sf
                                          .channel("sollInDieDatei")
-                                         .aggregate(a -> a.processor(inDieDatei))
+                                         .<Einzahlung, Einzahlung> transform(e -> e )
                                 )
 
                 )
-
+                .aggregate(a -> a.processor(inDieDatei))
                 .channel("wiederZusammen")
                 .handle(x -> System.out.println("im Handler: " + x.toString()))
                 .get();
@@ -181,7 +180,6 @@ public class BankEingangMitLambdas {
     }
     
     @Bean
-  //  @Scope(scopeName="prototype")
     public InDieDateiAggregator inDieDatei() {
         return new InDieDateiAggregator(inboundOutDirectory);
     }

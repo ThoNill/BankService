@@ -105,7 +105,7 @@ public class BankEingangMitLambdasTest {
     @Autowired
     public EinzahlungRepository einzahlungRepository;
 
-    @Ignore
+    
     @Test
     public void pollFindsValidFile() throws Exception {
 

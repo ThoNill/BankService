@@ -25,24 +25,11 @@ import data.KontoAuszug;
 public class InDieDateiAggregator {
     Logger LOG = LogManager.getLogger(InDieDateiAggregator.class);
 
-    private int anzahl = 0;
-    private int bisherDa = 0;
     private File inboundOutDirectory;
     private AtomicInteger counter = new AtomicInteger();
 
     public InDieDateiAggregator(File inboundOutDirectory) {
         this.inboundOutDirectory = inboundOutDirectory;
-    }
-
-    // @Transformer
-    public Datei zaehlen(Datei d) {
-        for (Einzahlung einzahlung : d.getKontoauszug().getEinzahlungen()) {
-            if (einzahlung.sollExportiertWerden()) {
-                anzahl++;
-            }
-        }
-        LOG.debug("Gesamtanzahl Einzahlung in die Datei " + anzahl);
-        return d;
     }
 
     @Aggregator
@@ -57,12 +44,15 @@ public class InDieDateiAggregator {
         try (FileWriter writer = new FileWriter(file)) {
             LOG.debug("Ausgabe von " + einzahlungen.size() + " Einzahlungen");
             for (Einzahlung einzahlung : einzahlungen) {
-                LOG.debug("Schreibe Einzahlung " + einzahlung);
-                String ausgabeZeile = String.format("%s;%s;%s;%S", einzahlung
-                        .getTransaktion(), einzahlung.getDebitorIBAN(),
-                        einzahlung.getKreditorIBAN(), einzahlung.getBetrag()
-                                .getNumber());
-                writer.write(ausgabeZeile);
+                if (einzahlung.sollExportiertWerden()) {
+                    LOG.debug("Schreibe Einzahlung " + einzahlung);
+                    String ausgabeZeile = String.format("%s;%s;%s;%S",
+                            einzahlung.getTransaktion(), einzahlung
+                                    .getDebitorIBAN(), einzahlung
+                                    .getKreditorIBAN(), einzahlung.getBetrag()
+                                    .getNumber());
+                    writer.write(ausgabeZeile);
+                }
             }
             writer.close();
         } catch (IOException e) {
@@ -71,10 +61,4 @@ public class InDieDateiAggregator {
         return file;
     }
 
-    @ReleaseStrategy
-    public boolean completionChecker(List<Message<?>> messages) {
-        bisherDa++;
-        LOG.debug("Gesamtanzahl Einzahlung in die Datei " + anzahl + " im Vergleich zu " + bisherDa);
-        return anzahl <= bisherDa;
-    }
 }

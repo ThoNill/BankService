@@ -36,7 +36,6 @@ public class BankEingangMitKlassenTest extends FlowTestBasis {
     @Qualifier("fileInputChannel")
     public DirectChannel filePollingChannel;
 
-
     @Autowired
     public EinzahlungRepository einzahlungRepository;
 
