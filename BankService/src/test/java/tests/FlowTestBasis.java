@@ -1,16 +1,27 @@
 package tests;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
 import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.integration.channel.DirectChannel;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.support.ChannelInterceptorAdapter;
+
+import repositories.EinzahlungRepository;
 
 public class FlowTestBasis {
 
@@ -30,6 +41,14 @@ public class FlowTestBasis {
     @Qualifier("inboundOutDirectory")
     public File inboundOutDirectory;
 
+    @Autowired
+    public EinzahlungRepository einzahlungRepository;
+
+    @Autowired
+    @Qualifier("fileInputChannel")
+    public DirectChannel filePollingChannel;
+
+    
     public FlowTestBasis() {
         super();
     }
@@ -59,6 +78,30 @@ public class FlowTestBasis {
         TestUtils.deleteRecursive(inboundFailedDirectory);
         TestUtils.deleteRecursive(inboundOutDirectory);
         
+    }
+
+    protected void einenCountdownMachen() throws InterruptedException {
+        final CountDownLatch latch = new CountDownLatch(1);
+        filePollingChannel.addInterceptor(new ChannelInterceptorAdapter() {
+            @Override
+            public void postSend(Message message, MessageChannel channel,
+                    boolean sent) {
+                latch.countDown();
+                super.postSend(message, channel, sent);
+            }
+        });
+        assertThat(latch.await(10, TimeUnit.SECONDS), is(true));
+    }
+
+    protected void überprüfeDieDatenbank() {
+        assertThat(einzahlungRepository.anzahlDerEinzahlungen(),is(1));
+    }
+
+    protected void überprüfeVerzeichnisse() throws Exception {
+        TestUtils.assertThatDirectoryIsEmpty(inboundReadDirectory);
+        TestUtils.assertThatDirectoryIsEmpty(inboundFailedDirectory);
+        TestUtils.assertThatDirectoryHasFiles(inboundProcessedDirectory, 1);
+        TestUtils.assertThatDirectoryHasFiles(inboundOutDirectory, 1);
     }
 
 }
