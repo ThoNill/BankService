@@ -44,21 +44,21 @@
 		<xsl:variable name="anzahlSubAuftraege">
 			<xsl:value-of select="count(descendant::Amt)" />
 		</xsl:variable>
-
+<!-- 
 		<sub>
 			<xsl:value-of select="$anzahlSubAuftraege" />
 		</sub>
-
+-->
 		<xsl:choose>
 			<xsl:when test="$anzahlSubAuftraege = 0">
 				<einzahlung>
-                    <xsl:call-template name="betrag" />
+					<xsl:call-template name="betrag" />
 
-	                <xsl:for-each select="NtryDtls/TxDtls">
-		                  <xsl:apply-templates />
-	                </xsl:for-each>
-                                 
-                    
+					<xsl:for-each select="NtryDtls/TxDtls">
+						<xsl:apply-templates />
+					</xsl:for-each>
+
+
 				</einzahlung>
 			</xsl:when>
 			<xsl:otherwise>
@@ -73,7 +73,20 @@
 	<xsl:template match="TxDtls">
 		<einzahlung>
 			<xsl:apply-templates />
+
+			<zusatz>
+				<xsl:value-of select="AddtlTxInf" />
+			</zusatz>
+
+
 		</einzahlung>
+	</xsl:template>
+
+
+	<xsl:template match="AddtlTxInf">
+		<zusatz>
+			<xsl:value-of select="." />
+		</zusatz>
 	</xsl:template>
 
 	<xsl:template match="Refs/TxId">
@@ -84,77 +97,61 @@
 
 
 	<xsl:template match="AmtDtls/TxAmt">
-            <xsl:call-template name="betrag" />
+		<xsl:call-template name="betrag" />
 	</xsl:template>
-
 
 	<xsl:template match="RltdPties/Dbtr/Nm">
 		<debitorName>
 			<xsl:value-of select="." />
 		</debitorName>
 	</xsl:template>
-
-
-
-
 	<xsl:template match="DbtrAcct/Id/IBAN">
 		<debitorIBAN>
 			<xsl:value-of select="." />
 		</debitorIBAN>
 	</xsl:template>
-
 	<xsl:template match="CdtrAcct/Id/IBAN">
 		<kreditorIBAN>
 			<xsl:value-of select="." />
 		</kreditorIBAN>
 	</xsl:template>
-
-
 	<xsl:template match="RltdAgts/DbtrAgt/FinInstnId/BIC">
 		<debitorBIC>
 			<xsl:value-of select="." />
 		</debitorBIC>
 	</xsl:template>
-
 	<xsl:template match="RltdAgts/CdtrAgt/FinInstnId/BIC">
 		<kreditorBIC>
 			<xsl:value-of select="." />
 		</kreditorBIC>
 	</xsl:template>
-
-
 	<xsl:template match="RmtInf/Ustrd">
 		<verwendungszweck>
 			<xsl:value-of select="." />
 		</verwendungszweck>
 	</xsl:template>
 
-	<xsl:template match="AddtlTxInf">
-		<zusatz>
-			<xsl:value-of select="." />
-		</zusatz>
-	</xsl:template>
 
 
 
 
-
-<xsl:template name="betrag" >
+	<xsl:template name="betrag">
 		<xsl:variable name="vorzeichenKennung">
 			<xsl:value-of select="ancestor-or-self::*/CdtDbtInd" />
 		</xsl:variable>
-<!-- 
-		<sign>
-			<xsl:value-of select="$vorzeichenKennung" />
-		</sign>
- -->
- 		<betrag>
- 		<xsl:choose>
-			<xsl:when test="$vorzeichenKennung = 'CRDT' "><xsl:value-of select="Amt" /></xsl:when>
-			<xsl:when test="$vorzeichenKennung = 'DBIT' ">-<xsl:value-of select="Amt" /></xsl:when>
-		</xsl:choose>
+		<!-- <sign> <xsl:value-of select="$vorzeichenKennung" /> </sign> -->
+		<betrag>
+			<xsl:choose>
+				<xsl:when test="$vorzeichenKennung = 'CRDT' ">
+					<xsl:value-of select="Amt" />
+				</xsl:when>
+				<xsl:when test="$vorzeichenKennung = 'DBIT' ">
+					-
+					<xsl:value-of select="Amt" />
+				</xsl:when>
+			</xsl:choose>
 		</betrag>
-</xsl:template>
+	</xsl:template>
 
 
 
