@@ -13,6 +13,7 @@
 		</Root>
 
 		<Logger name="flow" level="debug" />
+		<Logger name="ausgang" level="debug" />
 		
 	</Loggers>
 </Configuration>

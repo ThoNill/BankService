@@ -19,10 +19,10 @@ import org.springframework.integration.dsl.IntegrationFlow;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 
 @SpringBootApplication
-@ComponentScan({ "repositories", "services", "data", "flow" })
-@IntegrationComponentScan({ "repositories", "services", "data", "flow" })
+@ComponentScan({ "repositories", "services", "ausgang","data", "flow" })
+@IntegrationComponentScan({ "repositories", "services", "ausgang","data", "flow" })
 @EnableJpaRepositories({ "repositories" })
-@EntityScan("data")
+@EntityScan({"data","ausgang"})
 public class BankEingangMitKlassen extends FilePollerWithXsltTranformFlow{
 
     @Autowired

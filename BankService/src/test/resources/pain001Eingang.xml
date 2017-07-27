@@ -1,0 +1,21 @@
+<ueberweisungen>
+	<id>id1234</id>
+	<iban>DE1234</iban>
+	<bic>bicV</bic>
+	<name>AAA</name>
+
+	<auftrag>
+		<id>id1234</id>
+		<datum>30.01.1962</datum>
+
+		<ueberweisung>
+			<id>id1234</id>
+			<iban>DE1234</iban>
+			<betrag>100.00</betrag>
+			<name>BBB</name>
+			<bic>bicN</bic>
+			<verwendungsyweck>Test</verwendungsyweck>
+		</ueberweisung>
+
+	</auftrag>
+</ueberweisungen>

@@ -64,6 +64,7 @@ public class XSLTAnwenden extends FilePollerFlow {
         return stringResult.toString();
     }
 
+    @Override
     protected PlatformTransactionManager transactionManager() {
         return new PseudoTransactionManager();
     }

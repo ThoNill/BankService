@@ -1,5 +1,6 @@
 package tests;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,7 @@ public class BankEingangMitLambdasTest extends FlowTestBasis{
     @Qualifier("wiederZusammen")
     public DirectChannel wiederZusammenChannel;
 
+    @Ignore
     @Test
     public void pollFindsValidFile() throws Exception {
         einenCountdownMachen();
