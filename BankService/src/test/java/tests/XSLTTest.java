@@ -75,7 +75,7 @@ public class XSLTTest {
     @Qualifier("fileInputChannel")
     public DirectChannel filePollingChannel;
 
-    @Ignore
+    
     @Test
     public void pollFindsValidFile() throws Exception {
 

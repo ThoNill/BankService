@@ -1,5 +1,7 @@
 package tests;
 
+import java.io.File;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +22,6 @@ import repositories.UeberweisungRepository;
 //@EnableTransactionManagement
 public class ÜberweisungsTest {
   
-/*    @Bean
-    @Qualifier("erstelleUeberweisungenChannel")
-    public MessageChannel erstelleUeberweisungenChannel() {
-        return new DirectChannel();
-    }
-*/
   
     @Autowired
     public UeberweisungRepository ueberweisungRepository;
@@ -34,7 +30,10 @@ public class ÜberweisungsTest {
     @Qualifier("erstelleUeberweisungenChannel")
     public DirectChannel erstelleUeberweisungenChannel;
 
- 
+    @Autowired
+    @Qualifier("inboundOutDirectory")
+    public File inboundOutDirectory;
+
     
     @Test
     public void pollFindsValidFile() throws Exception {
@@ -47,9 +46,7 @@ public class ÜberweisungsTest {
         
         erstelleUeberweisungenChannel.send(message);
         
-    //    assertThat(latch.await(10, TimeUnit.SECONDS), is(true));
-     //   TestUtils.assertThatDirectoryIsEmpty(inboundReadDirectory);
-     //   TestUtils.assertThatDirectoryHasFiles(inboundProcessedDirectory, 1);
+        TestUtils.assertThatDirectoryHasFiles(inboundOutDirectory, 1);
     }
 
 }
