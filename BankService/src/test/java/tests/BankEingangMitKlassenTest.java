@@ -13,7 +13,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 //@DataJpaTest
 public class BankEingangMitKlassenTest extends FlowTestBasis {
 
-    
+    @Ignore
     @Test
     public void pollFindsValidFile() throws Exception {
         einenCountdownMachen();

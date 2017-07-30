@@ -97,15 +97,6 @@ public class Ueberweisung {
     }
 
 
-    @Override
-    public String toString() {
-        return "Überweisung [transaktion=" + transaktion + ", betrag=" + betrag
-                + ", debitorName=" + debitorName + ", verwendungszweck="
-                + verwendungszweck + ", debitorIBAN=" + debitorIBAN
-                + ", kreditorIBAN=" + kreditorIBAN + ", debitorBIC="
-                + debitorBIC + ", kreditorBIC=" + kreditorBIC + "]";
-    }
-
     @Convert(converter = data.JaxbIBANAdapter.class)
     public IBAN getDebitorIBAN() {
         return debitorIBAN;
@@ -164,6 +155,15 @@ public class Ueberweisung {
     
     public void setDatei(AusgangsDatei datei) {
         this.datei = datei;
+    }
+    
+    @Override
+    public String toString() {
+        return "Überweisung [transaktion=" + transaktion + ", betrag=" + betrag
+                + ", debitorName=" + debitorName + ", verwendungszweck="
+                + verwendungszweck + ", debitorIBAN=" + debitorIBAN
+                + ", kreditorIBAN=" + kreditorIBAN + ", debitorBIC="
+                + debitorBIC + ", kreditorBIC=" + kreditorBIC + "]";
     }
   
 }

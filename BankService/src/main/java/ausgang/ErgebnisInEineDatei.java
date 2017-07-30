@@ -32,5 +32,5 @@ public class ErgebnisInEineDatei extends AbstractTransformer {
         }
         return fileName;
     }
-
+    
 }

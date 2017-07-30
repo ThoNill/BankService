@@ -14,44 +14,49 @@ import repositories.AusgangsDateiRepository;
 import repositories.UeberweisungRepository;
 
 public class OffeneÜberweisungenAbfragen extends AbstractTransformer {
-    Logger LOG = LogManager.getLogger(OffeneÜberweisungenAbfragen.class);
+    public static final String DATEINR = "dateinr";
 
-    @Autowired
-    public UeberweisungRepository ueberweisungRepository;
+    private static final Logger LOG = LogManager.getLogger(OffeneÜberweisungenAbfragen.class);
 
-    @Autowired
-    public AusgangsDateiRepository ausgangsDateiRepository;
+    private UeberweisungRepository ueberweisungRepository;
 
-    public OffeneÜberweisungenAbfragen() {
+    private AusgangsDateiRepository ausgangsDateiRepository;
 
+    
+    public OffeneÜberweisungenAbfragen(UeberweisungRepository ueberweisungRepository,
+            AusgangsDateiRepository ausgangsDateiRepository) {
+        super();
+        this.ueberweisungRepository = ueberweisungRepository;
+        this.ausgangsDateiRepository = ausgangsDateiRepository;
     }
+
 
     @Override
     @Transactional
-    protected Object doTransform(Message<?> message) throws Exception {
+    public Object doTransform(Message<?> message) throws Exception {
         LOG.debug("ÜberweisungenInAusgangsdatei " + message.getPayload());
 
-        List<Ueberweisung> überweisungen = ueberweisungRepository
-                .ohneDateinummer();
+        List<Ueberweisung> überweisungen = ueberweisungRepository.ohneDateinummer();
         if (!überweisungen.isEmpty()) {
             LOG.debug("Überweisungen gefunden ");
-            
+
             AusgangsDatei datei = new AusgangsDatei();
             datei = ausgangsDateiRepository.save(datei);
             for (Ueberweisung u : überweisungen) {
-                u = ueberweisungRepository.save(u);
                 datei.add(u);
+                u = ueberweisungRepository.save(u);
 
             }
             datei = ausgangsDateiRepository.save(datei);
 
-            LOG.debug("DateiNummer= " +datei.getDateiNummer());
-            
+            LOG.debug("DateiNummer= " + datei.getDateiNummer());
+
             Message newMessagemessage = MessageBuilder
                     .withPayload(new Long(datei.getDateiNummer()))
-                    .setHeader("info", "Datei gefüllt").build();
+                    .setHeader(DATEINR, datei.getDateiNummer()).build();
             return newMessagemessage;
         }
         return message;
     }
+
 }

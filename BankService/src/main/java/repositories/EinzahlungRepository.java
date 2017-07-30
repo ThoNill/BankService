@@ -9,4 +9,5 @@ public interface EinzahlungRepository extends CrudRepository<Einzahlung, Long> {
 
   @Query("select count(*) from Einzahlung")
   int  anzahlDerEinzahlungen();
+  
 }

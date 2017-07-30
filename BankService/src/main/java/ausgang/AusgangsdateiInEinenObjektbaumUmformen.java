@@ -15,17 +15,19 @@ import repositories.AusgangsDateiRepository;
 import repositories.UeberweisungRepository;
 
 public class AusgangsdateiInEinenObjektbaumUmformen extends AbstractTransformer {
-    Logger LOG = LogManager
+    private static Logger LOG = LogManager
             .getLogger(AusgangsdateiInEinenObjektbaumUmformen.class);
 
-    @Autowired
-    public UeberweisungRepository ueberweisungRepository;
+    private UeberweisungRepository ueberweisungRepository;
 
-    @Autowired
-    public AusgangsDateiRepository ausgangsDateiRepository;
+    private AusgangsDateiRepository ausgangsDateiRepository;
 
-    public AusgangsdateiInEinenObjektbaumUmformen() {
-
+    public AusgangsdateiInEinenObjektbaumUmformen(
+            UeberweisungRepository ueberweisungRepository,
+            AusgangsDateiRepository ausgangsDateiRepository) {
+        super();
+        this.ueberweisungRepository = ueberweisungRepository;
+        this.ausgangsDateiRepository = ausgangsDateiRepository;
     }
 
     @Override
@@ -67,4 +69,5 @@ public class AusgangsdateiInEinenObjektbaumUmformen extends AbstractTransformer 
         }
         return message;
     }
+
 }

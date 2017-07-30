@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -21,9 +20,7 @@ import javax.persistence.Table;
 public class AusgangsDatei {
     
     private Long dateiNummer;
-  //  private Date dateiErstellt = new Date();
-    
-
+ 
     @Basic
     @Id
     @Column(name = "DATEINUMMER")
@@ -38,7 +35,7 @@ public class AusgangsDatei {
 
     private List<Ueberweisung> ueberweisungen = new ArrayList<>();
 
-    @OneToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL, mappedBy = "datei")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "datei")
     public List<Ueberweisung> getUeberweisungen() {
         return ueberweisungen;
     }

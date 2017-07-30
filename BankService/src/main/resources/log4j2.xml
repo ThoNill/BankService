@@ -8,11 +8,13 @@
 
 	<Loggers>
 
-		<Root level="error">
+		<Root level="debug">
 			<AppenderRef ref="Console" />
 		</Root>
 
 		<Logger name="flow" level="debug" />
+		<Logger name="ausgabe" level="debug" />
+		<Logger name="fehlerManagement" level="debug" />
 		
 	</Loggers>
 </Configuration>
