@@ -1,5 +1,7 @@
 package ausgang;
 
+import java.util.Date;
+
 import javax.money.MonetaryAmount;
 import javax.persistence.Convert;
 import javax.xml.bind.annotation.XmlElement;
@@ -12,6 +14,7 @@ import data.IBAN;
 import data.JaxbBICAdapter;
 import data.JaxbIBANAdapter;
 import data.JaxbMonetaryAmountAdapter;
+import data.ShortDateAdapter;
 
 @XmlRootElement
 public class XMLÜberweisung {
@@ -36,7 +39,6 @@ public class XMLÜberweisung {
         this.id = id;
     }
 
-    @Convert(converter = betrag.GeldKonverter.class)
     @XmlJavaTypeAdapter(JaxbMonetaryAmountAdapter.class)
     public MonetaryAmount getBetrag() {
         return betrag;
@@ -72,7 +74,6 @@ public class XMLÜberweisung {
                 + bic + "]";
     }
 
-    @Convert(converter = data.JaxbIBANAdapter.class)
     @XmlJavaTypeAdapter(JaxbIBANAdapter.class)
     public IBAN getIban() {
         return iban;
@@ -82,7 +83,6 @@ public class XMLÜberweisung {
         this.iban = iban;
     }
 
-    @Convert(converter = data.JaxbBICAdapter.class)
     @XmlJavaTypeAdapter(JaxbBICAdapter.class)
     public BIC getBic() {
         return bic;

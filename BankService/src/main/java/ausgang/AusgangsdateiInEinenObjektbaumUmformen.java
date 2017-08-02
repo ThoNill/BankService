@@ -52,13 +52,14 @@ public class AusgangsdateiInEinenObjektbaumUmformen extends AbstractTransformer 
                 xmlÜberweiung.setName(u.getKreditorName());
                 xmlÜberweiung.setBetrag(u.getBetrag());
                 xmlÜberweiung.setVerwendungszweck(u.getVerwendungszweck());
-
+                
                 XMLAuftrag xmlAuftrag = new XMLAuftrag();
                 xmlAuftrag.setId(u.getUeberweisungsId());
                 xmlAuftrag.add(xmlÜberweiung);
                 xmlAuftrag.setBic(u.getDebitorBIC());
                 xmlAuftrag.setIban(u.getDebitorIBAN());
                 xmlAuftrag.setName(u.getDebitorName());
+                xmlAuftrag.setDatum(u.getAuzahlung());
 
                 xmlDatei.add(xmlAuftrag);
             }

@@ -14,8 +14,8 @@
 						Message-ID-
 						<xsl:value-of select="id" />
 					</MsgId>
-					<CreDtTm>2010-11-11T09:30:47.000Z</CreDtTm>
-					<NbOfTxs>2</NbOfTxs>
+					<CreDtTm><xsl:value-of select="datum" /></CreDtTm>
+					<NbOfTxs> <xsl:value-of select="count(auftrag)" /> </NbOfTxs>
 					<InitgPty>
 						<Nm>
 							<xsl:value-of select="name" />
@@ -23,7 +23,7 @@
 					</InitgPty>
 				</GrpHdr>
 
-				<xsl:apply-templates />
+				<xsl:apply-templates select="auftrag"/>
 
 
 			</CstmrCdtTrfInitn>
@@ -40,40 +40,37 @@
 			</PmtInfId>
 			<PmtMtd>TRF</PmtMtd>
 			<BtchBookg>true</BtchBookg>
-			<NbOfTxs>2</NbOfTxs>
-			<CtrlSum>6655.86</CtrlSum>
+			<NbOfTxs> <xsl:value-of select="count(ueberweisung)" /></NbOfTxs>
+			<CtrlSum><xsl:value-of select="sum(ueberweisung/betrag)" /></CtrlSum>
 			<PmtTpInf>
 				<SvcLvl>
 					<Cd>SEPA</Cd>
 				</SvcLvl>
 			</PmtTpInf>
 			<ReqdExctnDt>
-				<xsl:value-of select="datum" />
-				2010-11-25
-			</ReqdExctnDt>
+				<xsl:value-of select="datum" /></ReqdExctnDt>
 			<Dbtr>
 				<Nm>
-					<xsl:value-of select="../name" />
+					<xsl:value-of select="name" />
 				</Nm>
 			</Dbtr>
 			<DbtrAcct>
 				<Id>
 					<IBAN>
-						<xsl:value-of select="../iban" />
+						<xsl:value-of select="iban" />
 					</IBAN>
 				</Id>
 			</DbtrAcct>
 			<DbtrAgt>
 				<FinInstnId>
 					<BIC>
-						<xsl:value-of select="../bic" />
+						<xsl:value-of select="bic" />
 					</BIC>
 				</FinInstnId>
 			</DbtrAgt>
 			<ChrgBr>SLEV</ChrgBr>
 
-
-			<xsl:apply-templates />
+			<xsl:apply-templates select="ueberweisung"/>
 
 		</PmtInf>
 	</xsl:template>

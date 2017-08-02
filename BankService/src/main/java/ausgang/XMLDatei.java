@@ -6,12 +6,16 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import data.LongDateAdapter;
+import data.ShortDateAdapter;
 
 @XmlRootElement(name="ueberweisungen")
 public class XMLDatei {
     private long id;
     private long dateiNummer;
-    private Date datum;
+    private Date datum = new Date();
 
     List<XMLAuftrag> aufträge = new ArrayList<>();
 
@@ -43,6 +47,7 @@ public class XMLDatei {
         this.dateiNummer = dateiNummer;
     }
 
+    @XmlJavaTypeAdapter(LongDateAdapter.class)
     public Date getDatum() {
         return datum;
     }

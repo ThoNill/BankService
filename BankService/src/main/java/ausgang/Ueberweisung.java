@@ -35,6 +35,7 @@ public class Ueberweisung {
     private IBAN kreditorIBAN= new IBAN("");
     private BIC debitorBIC = new BIC("");
     private BIC kreditorBIC = new BIC("");
+    private Date auzahllung = new Date();
 
 
     private AusgangsDatei datei;

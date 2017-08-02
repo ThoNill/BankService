@@ -12,6 +12,7 @@ import repositories.UeberweisungRepository;
 import ausgang.Ueberweisung;
 import betrag.Geld;
 import data.BIC;
+import data.IBAN;
 
 public class TestÜberweisungenErzeugen {
     Logger LOG = LogManager.getLogger(TestÜberweisungenErzeugen.class);
@@ -43,9 +44,15 @@ public class TestÜberweisungenErzeugen {
     private void addOne(List<Ueberweisung> überweisungen, int i) {
         Ueberweisung ueberweisung = new Ueberweisung();
         ueberweisung.setAuzahlung(new Date());
-        ueberweisung.setBetrag(Geld.createAmount(1000 * i));
+        ueberweisung.setBetrag(Geld.createAmount(1000 * i + 0.12));
         ueberweisung.setDebitorBIC(new BIC("DBIC" + i));
         ueberweisung.setKreditorBIC(new BIC("KBIC" + i));
+        ueberweisung.setDebitorIBAN(new IBAN("DIBAN" + i));
+        ueberweisung.setKreditorIBAN(new IBAN("KIBAN" + i));
+        ueberweisung.setDebitorName("D Name" + i);
+        ueberweisung.setKreditorName("K NAme" + i);
+        ueberweisung.setVerwendungszweck("Verwendungszweck " + i);
+        
         überweisungen.add(ueberweisung);
     }
 

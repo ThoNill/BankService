@@ -13,6 +13,7 @@ import data.BIC;
 import data.IBAN;
 import data.JaxbBICAdapter;
 import data.JaxbIBANAdapter;
+import data.ShortDateAdapter;
 
 @XmlRootElement
 public class XMLAuftrag {
@@ -62,15 +63,6 @@ public class XMLAuftrag {
     }
 
 
-    @Override
-    public String toString() {
-        return "Überweisung [ Name=" + name + ", Datum="
-                + datum + ", IBAN=" + iban
-                + ", BIC="
-                + bic + "]";
-    }
-
-    @Convert(converter = data.JaxbIBANAdapter.class)
     @XmlJavaTypeAdapter(JaxbIBANAdapter.class)
     public IBAN getIban() {
         return iban;
@@ -80,7 +72,6 @@ public class XMLAuftrag {
         this.iban = iban;
     }
 
-    @Convert(converter = data.JaxbBICAdapter.class)
     @XmlJavaTypeAdapter(JaxbBICAdapter.class)
     public BIC getBic() {
         return bic;
@@ -90,6 +81,7 @@ public class XMLAuftrag {
         this.bic = bic;
     }
 
+    @XmlJavaTypeAdapter(ShortDateAdapter.class)
     public Date getDatum() {
         return datum;
     }
@@ -99,6 +91,14 @@ public class XMLAuftrag {
     }
 
     
+    
+    @Override
+    public String toString() {
+        return "Überweisung [ Name=" + name + ", Datum="
+                + datum + ", IBAN=" + iban
+                + ", BIC="
+                + bic + "]";
+    }
     
     
 }
