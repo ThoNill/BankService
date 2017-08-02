@@ -75,9 +75,9 @@ public class XSLTTest {
     @Qualifier("fileInputChannel")
     public DirectChannel filePollingChannel;
 
-    @Ignore
+    
     @Test
-    public void pollFindsValidFile() throws Exception {
+    public void normalerAblauf() throws Exception {
 
         final CountDownLatch latch = new CountDownLatch(1);
         filePollingChannel.addInterceptor(new ChannelInterceptorAdapter() {

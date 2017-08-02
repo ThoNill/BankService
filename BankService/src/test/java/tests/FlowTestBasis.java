@@ -1,6 +1,7 @@
 package tests;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -8,6 +9,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -77,7 +80,8 @@ public class FlowTestBasis extends AsyncTest {
     }
 
     protected void einenCountdownMachen() throws InterruptedException {
-        einenCountdownMachen(filePollingChannel);
+        CountDownLatch latch = einenCountdownMachen(filePollingChannel);
+        assertThat(latch.await(10, TimeUnit.SECONDS), is(true));
     }
     
     protected void überprüfeDieDatenbank() {

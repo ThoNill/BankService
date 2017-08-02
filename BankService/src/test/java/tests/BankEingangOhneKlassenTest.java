@@ -12,9 +12,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class BankEingangOhneKlassenTest extends FlowTestBasis{
 
-    @Ignore
+    
     @Test
-    public void pollFindsValidFile() throws Exception {
+    public void normalerAblauf() throws Exception {
         einenCountdownMachen();
         überprüfeVerzeichnisse();
         überprüfeDieDatenbank();
