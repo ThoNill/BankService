@@ -8,7 +8,9 @@ import org.springframework.integration.transformer.AbstractTransformer;
 import org.springframework.messaging.Message;
 import org.springframework.transaction.annotation.Transactional;
 
+import repositories.EingangsDateiRepository;
 import repositories.EinzahlungRepository;
+import data.EingangsDatei;
 import data.Einzahlung;
 
 public class InDieDatenbank extends AbstractTransformer  {
@@ -16,6 +18,10 @@ public class InDieDatenbank extends AbstractTransformer  {
     
     @Autowired
     public EinzahlungRepository einzahlungRepository;
+    
+    @Autowired
+    public EingangsDateiRepository  eingangsDateiRepository;
+    
 
     
     public InDieDatenbank() {
@@ -37,7 +43,13 @@ public class InDieDatenbank extends AbstractTransformer  {
 
     @Transactional
     protected void speichern(List<Einzahlung> einzahlungen) {
-        einzahlungRepository.save(einzahlungen);
+        EingangsDatei datei = new EingangsDatei();
+        datei = eingangsDateiRepository.save(datei);
+        for(Einzahlung einzahlung : einzahlungen) {
+                 datei.add(einzahlung);
+                 einzahlungRepository.save(einzahlung);
+        }
+        eingangsDateiRepository.save(datei);
     }
 
 

@@ -25,7 +25,6 @@ import data.IBAN;
 @SequenceGenerator(name = "UEBERWEISUNG_SEQ", sequenceName = "UEBERWEISUNG_SEQ")
 public class Ueberweisung {
     private Long ueberweisungsId;
-    
     private Date auzahlung= new Date();
     private String transaktion="";
     private MonetaryAmount betrag = Geld.getNull();
@@ -36,6 +35,9 @@ public class Ueberweisung {
     private IBAN kreditorIBAN= new IBAN("");
     private BIC debitorBIC = new BIC("");
     private BIC kreditorBIC = new BIC("");
+
+
+    private AusgangsDatei datei;
 
     public Ueberweisung() {
         super();
@@ -141,13 +143,10 @@ public class Ueberweisung {
     public void setAuzahlung(Date auzahlung) {
         this.auzahlung = auzahlung;
     }
-
-
-    private AusgangsDatei datei;
     
     
     @ManyToOne(cascade = CascadeType.ALL,optional=true)
-    @JoinColumn(name = "DateiNummer")
+    @JoinColumn(name = "Nummer")
     public AusgangsDatei getDatei() {
         return datei;
     }

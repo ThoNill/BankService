@@ -1,14 +1,18 @@
 package data;
 
 import javax.money.MonetaryAmount;
+import javax.persistence.CascadeType;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import ausgang.AusgangsDatei;
 import betrag.Geld;
 
 @Entity
@@ -24,6 +28,7 @@ public class Einzahlung {
     private IBAN kreditorIBAN= new IBAN("");
     private BIC debitorBIC = new BIC("");
     private BIC kreditorBIC = new BIC("");
+    private EingangsDatei datei;
 
     public Einzahlung() {
         super();
@@ -128,4 +133,14 @@ public class Einzahlung {
         return "99".equals(getDebitorIBAN().toString().substring(2, 4));
     }
 
+    @ManyToOne(cascade = CascadeType.ALL,optional=true)
+    @JoinColumn(name = "Nummer")
+    public EingangsDatei getDatei() {
+        return datei;
+    }
+
+    public void setDatei(EingangsDatei datei) {
+        this.datei = datei;
+    }
+    
 }
