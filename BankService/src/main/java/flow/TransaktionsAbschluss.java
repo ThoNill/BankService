@@ -89,7 +89,7 @@ public class TransaktionsAbschluss implements
             }
 
         } else {
-            LOG.error("Payload isst keine Datei " + message);
+            LOG.error("Payload ist keine Datei " + message);
         }
     }
 }
