@@ -43,6 +43,7 @@ public class BankEingangMitLambdasTest extends FlowTestBasis{
     @Qualifier("wiederZusammen")
     public DirectChannel wiederZusammenChannel;
 
+    
     @Test
     public void normalerAblauf() throws Exception {
         einenCountdownMachen();

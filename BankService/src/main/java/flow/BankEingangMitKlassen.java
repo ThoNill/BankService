@@ -18,6 +18,9 @@ import org.springframework.integration.core.MessageSource;
 import org.springframework.integration.dsl.IntegrationFlow;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 
+import repositories.EingangsDateiRepository;
+import fehlerManagement.Bombe;
+
 @SpringBootApplication
 @ComponentScan({ "repositories", "services", "ausgang","data", "flow" })
 @IntegrationComponentScan({ "repositories", "services", "ausgang","data", "flow" })
@@ -41,11 +44,13 @@ public class BankEingangMitKlassen extends FilePollerWithXsltTranformFlow{
             Jaxb2Marshaller einzahlungUnMarshaller,
             KontoauszugsSplitter kontoauszugsSplitter,
             InDieDatei schreibeInDieDatei,
+            EingangsDateiErzeugen erzeueEingangsDatei,
             InDieDatenbank schreibeInDieDatenbank) {
             return processFileFlowBuilder(taskExecutor, fileReadingMessageSource,
                         applicationContext, einzahlungUnMarshaller)
-                             .split(kontoauszugsSplitter).transform(schreibeInDieDatenbank)
-                .transform(schreibeInDieDatei).aggregate() 
+                        .transform(erzeueEingangsDatei)
+                .split(kontoauszugsSplitter).transform(schreibeInDieDatenbank)
+                .transform(new Bombe(schreibeInDieDatei)).aggregate()
                 .handle("abschlussProcessor", "process").get();
     }
     
@@ -60,11 +65,19 @@ public class BankEingangMitKlassen extends FilePollerWithXsltTranformFlow{
         return new KontoauszugsSplitter();
     }
 
+
+    @Bean
+    public EingangsDateiErzeugen erzeueEingangsDatei() {
+        return new EingangsDateiErzeugen(eingangsDateiRepository);
+    }
+
+    
     @Bean
     public InDieDatei schreibeInDieDatei() {
         return new InDieDatei(inboundOutDirectory);
     }
 
+    
    
     @Bean
     public InDieDatenbank schreibeInDieDatenbank() {

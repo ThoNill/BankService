@@ -1,6 +1,7 @@
 package flow;
 
 import java.io.File;
+import java.util.HashMap;
 
 import javax.xml.transform.dom.DOMResult;
 
@@ -12,6 +13,8 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.integration.annotation.Transformer;
 import org.springframework.integration.core.MessageSource;
 import org.springframework.integration.dsl.IntegrationFlowBuilder;
+import org.springframework.integration.transformer.HeaderEnricher;
+import org.springframework.integration.transformer.support.HeaderValueMessageProcessor;
 import org.springframework.integration.xml.transformer.UnmarshallingTransformer;
 import org.springframework.integration.xml.transformer.XsltPayloadTransformer;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
@@ -46,12 +49,13 @@ public class FilePollerWithXsltTranformFlow extends FilePollerFlow {
             ) {
         return processFileFlowBuilder(taskExecutor, fileReadingMessageSource,
                 applicationContext)
+                .transform(new DateinameInDenHeader())
                 .transform(new XsltPayloadTransformer(this.xsl))
                 .<DOMResult, Document> transform(x -> transformPayload(x))
                 // .<DOMResult,Node> transform(result -> result.getNode())
                 .transform(new UnmarshallingTransformer(einzahlungUnMarshaller));
     }
-
+    
     @Bean
     public Jaxb2Marshaller einzahlungUnMarshaller() {
         Jaxb2Marshaller unmarshaller = new Jaxb2Marshaller();

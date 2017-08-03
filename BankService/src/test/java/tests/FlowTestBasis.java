@@ -18,7 +18,10 @@ import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.integration.channel.DirectChannel;
+import org.springframework.transaction.annotation.Transactional;
 
+import fehlerManagement.Bombe;
+import repositories.EingangsDateiRepository;
 import repositories.EinzahlungRepository;
 
 
@@ -44,6 +47,10 @@ public class FlowTestBasis extends AsyncTest {
     public EinzahlungRepository einzahlungRepository;
 
     @Autowired
+    EingangsDateiRepository eingangsDateiRepository;
+  
+    
+    @Autowired
     @Qualifier("fileInputChannel")
     public DirectChannel filePollingChannel;
 
@@ -59,7 +66,9 @@ public class FlowTestBasis extends AsyncTest {
 
     @Before
     public void createFiles() throws IOException, InterruptedException {
+        Bombe.setAuslöser("");
         cleanDirectories();
+        cleanDatenbank();
         
         Files.createDirectories(inboundReadDirectory.toPath());
         Files.createDirectories(inboundProcessedDirectory.toPath());
@@ -69,6 +78,12 @@ public class FlowTestBasis extends AsyncTest {
         Files.copy(Paths.get("./src/test/resources/kontoauszug.xml"),
                 new FileOutputStream(inboundReadDirectory.getAbsolutePath()
                         + "/kontoauszug.xml"));
+    }
+
+    @Transactional
+    public void cleanDatenbank() {
+        eingangsDateiRepository.deleteAll();
+        einzahlungRepository.deleteAll();
     }
 
     protected void cleanDirectories() throws FileNotFoundException {
@@ -81,7 +96,7 @@ public class FlowTestBasis extends AsyncTest {
 
     protected void einenCountdownMachen() throws InterruptedException {
         CountDownLatch latch = einenCountdownMachen(filePollingChannel);
-        assertThat(latch.await(10, TimeUnit.SECONDS), is(true));
+        latch.await(10, TimeUnit.SECONDS);
     }
     
     protected void überprüfeDieDatenbank() {
@@ -95,4 +110,17 @@ public class FlowTestBasis extends AsyncTest {
         TestUtils.assertThatDirectoryHasFiles(inboundOutDirectory, 1);
     }
 
+
+    protected void überprüfeDieDatenbankBeiFehler() {
+        Assert.assertThat(einzahlungRepository.anzahlDerEinzahlungen(),is(0));
+    }
+
+    protected void überprüfeVerzeichnisseBeiFehler() throws Exception {
+        TestUtils.assertThatDirectoryIsEmpty(inboundReadDirectory);
+        TestUtils.assertThatDirectoryIsEmpty(inboundProcessedDirectory);
+        TestUtils.assertThatDirectoryHasFiles(inboundFailedDirectory, 1);
+        TestUtils.assertThatDirectoryHasFiles(inboundOutDirectory, 0);
+    }
+
+    
 }

@@ -12,6 +12,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,6 +75,7 @@ public class ÜberweisungsTest extends AsyncTest {
     @Autowired
     TaskExecutor executor;
 
+    
     @Test
     public void normalerAblauf() throws Exception {
         before();
@@ -106,7 +108,7 @@ public class ÜberweisungsTest extends AsyncTest {
     }
 
     
-
+@Ignore
     @Test
     public void fehlerFall() throws Exception {
         before();

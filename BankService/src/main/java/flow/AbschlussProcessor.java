@@ -10,7 +10,9 @@ public class AbschlussProcessor {
     Logger LOG = LogManager.getLogger(AbschlussProcessor.class);
     
     public void process(Message<String> msg) {
+        LOG.debug("Abschluss des Prozesses ");
+        LOG.debug("headers = " + msg.getHeaders());
         Object content = msg.getPayload();
-        LOG.debug("Abschluss des Prozesses [" + content+ "]");
+        LOG.debug("payload [" + content+ "]");
     }
 }

@@ -25,6 +25,8 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import repositories.EingangsDateiRepository;
+
 public class FilePollerFlow {
 
     @Autowired
@@ -85,7 +87,10 @@ public class FilePollerFlow {
     }
 
     @Autowired
-    EntityManagerFactory entityManagerFactory;
+    public EntityManagerFactory entityManagerFactory;
+
+    @Autowired
+    public EingangsDateiRepository eingangsDateiRepository;
 
     
     protected PlatformTransactionManager transactionManager() {
@@ -96,7 +101,7 @@ public class FilePollerFlow {
     TransactionSynchronizationFactory transactionSynchronizationFactory(
             ApplicationContext applicationContext) {
         TransactionSynchronizationProcessor syncProcessor = new TransaktionsAbschluss(
-                inboundProcessedDirectory, inboundFailedDirectory);
+                inboundProcessedDirectory, inboundFailedDirectory,eingangsDateiRepository);
         return new DefaultTransactionSynchronizationFactory(syncProcessor);
     }
 
