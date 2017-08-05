@@ -44,11 +44,11 @@ public class BankEingangMitKlassen extends FilePollerWithXsltTranformFlow{
             Jaxb2Marshaller einzahlungUnMarshaller,
             KontoauszugsSplitter kontoauszugsSplitter,
             InDieDatei schreibeInDieDatei,
-            EingangsDateiErzeugen erzeueEingangsDatei,
+            EingangsDateiErzeugen erzeugeEingangsDatei,
             InDieDatenbank schreibeInDieDatenbank) {
             return processFileFlowBuilder(taskExecutor, fileReadingMessageSource,
                         applicationContext, einzahlungUnMarshaller)
-                        .transform(erzeueEingangsDatei)
+                        .transform(erzeugeEingangsDatei)
                 .split(kontoauszugsSplitter).transform(schreibeInDieDatenbank)
                 .transform(new Bombe(schreibeInDieDatei)).aggregate()
                 .handle("abschlussProcessor", "process").get();
@@ -67,7 +67,7 @@ public class BankEingangMitKlassen extends FilePollerWithXsltTranformFlow{
 
 
     @Bean
-    public EingangsDateiErzeugen erzeueEingangsDatei() {
+    public EingangsDateiErzeugen erzeugeEingangsDatei() {
         return new EingangsDateiErzeugen(eingangsDateiRepository);
     }
 

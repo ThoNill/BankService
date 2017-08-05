@@ -14,11 +14,14 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.integration.annotation.IntegrationComponentScan;
 import org.springframework.integration.core.MessageSource;
 import org.springframework.integration.dsl.IntegrationFlow;
+import org.springframework.integration.transformer.AbstractTransformer;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 
 import repositories.EinzahlungRepository;
 import data.Datei;
 import data.Einzahlung;
+import flow.NeutraleTransformation;
+import fehlerManagement.Bombe;
 
 @SpringBootApplication
 @ComponentScan({ "repositories", "services", "data", "flow" })
@@ -63,7 +66,9 @@ public class BankEingangMitLambdas extends FilePollerWithXsltTranformFlow {
                                 Boolean.TRUE,
                                 sf -> sf.channel("sollInDieDatei")
                                         .<Einzahlung, Einzahlung> transform(
-                                                e -> e))
+                                                e -> e)
+                                                .transform(new Bombe(new NeutraleTransformation()))
+                                                )
 
                 ).aggregate(a -> a.processor(inDieDatei))
                 .channel("wiederZusammen")

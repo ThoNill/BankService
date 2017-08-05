@@ -48,7 +48,6 @@ public class EingangsDateiErzeugen extends AbstractTransformer {
 
     protected Message<?> ergänzeMessageUmDateiNummer(EingangsDatei datei,
             Message<?> message) {
-        
         MessageBuilder<?> builder = MessageBuilder.fromMessage(message);
         builder.setHeader(DATEINR, datei.getDateiNummer());
         return builder.build();

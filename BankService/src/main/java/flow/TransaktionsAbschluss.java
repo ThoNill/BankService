@@ -44,7 +44,6 @@ public class TransaktionsAbschluss implements
     @Override
     public void processAfterRollback(IntegrationResourceHolder holder) {
         verschiebeDatei(holder, inboundFailedDirectory);
-        bereinigeDatenbank(holder, eingangsDateiRepository);
     }
 
     protected void verschiebeDatei(IntegrationResourceHolder holder,
@@ -62,34 +61,4 @@ public class TransaktionsAbschluss implements
         }
     }
 
-    @Transactional
-    protected void bereinigeDatenbank(IntegrationResourceHolder holder,
-            EingangsDateiRepository eingangsDateiRepository) {
-        Message<?> message = holder.getMessage();
-        LOG.debug("bereinige Datenbank mit Message " + message);
-
-        if (message != null && message.getPayload() instanceof File) {
-            File file = (File) message.getPayload();
-            if (file != null) {
-                for( EingangsDatei d :eingangsDateiRepository.findAll()) {
-                    LOG.debug("D: " + d.getDateiname());
-                }
-                EingangsDatei datei = eingangsDateiRepository
-                        .findByDateiname(file.getPath().toString());
-                if (datei != null) {
-                    eingangsDateiRepository.delete(datei);
-                    LOG.debug("die Eingangsdatei " + datei.getDateiNummer()
-                            + " wurde entfernt");
-                } else {
-                    LOG.debug("finde die Eingangsdatei "
-                            + file.getPath().toString() + " nicht");
-                }
-            } else {
-                LOG.error("File ist null");
-            }
-
-        } else {
-            LOG.error("Payload ist keine Datei " + message);
-        }
-    }
 }

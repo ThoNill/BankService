@@ -1,5 +1,8 @@
 package tests;
 
+import static org.hamcrest.CoreMatchers.is;
+
+import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,6 +15,10 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.support.ChannelInterceptorAdapter;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import fehlerManagement.Bombe;
+import flow.InDieDatei;
+import flow.NeutraleTransformation;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = flow.BankEingangMitLambdas.class)
@@ -98,4 +105,19 @@ public class BankEingangMitLambdasTest extends FlowTestBasis{
 
     }
 
+    
+    @Test
+    public void mitFehler() throws Exception {
+        Bombe.setAuslöser(NeutraleTransformation.class);
+        einenCountdownMachen();
+        überprüfeVerzeichnisseBeiFehler();
+        überprüfeDieDatenbankBeiFehler();
+    }
+    
+    protected void überprüfeDieDatenbankBeiFehler() {
+        super.überprüfeDieDatenbankBeiFehler();
+        Assert.assertThat(eingangsDateiRepository.count(),is(0L));
+        Assert.assertThat(einzahlungRepository.count(),is(0L));
+    }
+ 
 }
