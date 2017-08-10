@@ -22,8 +22,8 @@ import repositories.EingangsDateiRepository;
 import fehlerManagement.Bombe;
 
 @SpringBootApplication
-@ComponentScan({ "repositories", "services", "ausgang","data", "flow" })
-@IntegrationComponentScan({ "repositories", "services", "ausgang","data", "flow" })
+@ComponentScan({ "repositories", "services", "ausgang","data", "flow","batch" })
+@IntegrationComponentScan({ "repositories", "services", "ausgang","data", "flow","batch" })
 @EnableJpaRepositories({ "repositories" })
 @EntityScan({"data","ausgang"})
 public class BankEingangMitKlassen extends FilePollerWithXsltTranformFlow{
