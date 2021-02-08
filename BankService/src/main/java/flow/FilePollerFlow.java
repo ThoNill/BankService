@@ -47,13 +47,7 @@ public class FilePollerFlow {
     }
     
 
-    @Bean
-    public MessageChannel fileInputChannel() {
-        return new DirectChannel();
-    }
-
-
-    public IntegrationFlowBuilder processFileFlowBuilder(
+      public IntegrationFlowBuilder processFileFlowBuilder(
             TaskExecutor taskExecutor,
             MessageSource<File> fileReadingMessageSource,
             ApplicationContext applicationContext) {
@@ -101,7 +95,7 @@ public class FilePollerFlow {
     TransactionSynchronizationFactory transactionSynchronizationFactory(
             ApplicationContext applicationContext) {
         TransactionSynchronizationProcessor syncProcessor = new TransaktionsAbschluss(
-                inboundProcessedDirectory, inboundFailedDirectory,eingangsDateiRepository);
+                inboundProcessedDirectory,null, inboundFailedDirectory,null,eingangsDateiRepository);
         return new DefaultTransactionSynchronizationFactory(syncProcessor);
     }
 

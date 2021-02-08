@@ -9,6 +9,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -32,7 +33,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @SpringBootTest(classes = flow.XSLTAnwenden.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 // @DataJpaTest
-public class XSLTTest {
+public class XSLTTest extends CopyHelper{
     @Autowired
     @Qualifier("inboundReadDirectory")
     public File inboundReadDirectory;
@@ -64,12 +65,13 @@ public class XSLTTest {
         }
     }
 
+    
     @Before
     public void createFiles() throws IOException, InterruptedException {
-        Files.copy(Paths.get("./src/test/resources/kontoauszug.xml"),
-                new FileOutputStream(inboundReadDirectory.getAbsolutePath()
-                        + "/kontoauszug.xml"));
+     	copy("./src/test/resources/kontoauszug.xml");
+       
     }
+
 
     @Autowired
     @Qualifier("fileInputChannel")

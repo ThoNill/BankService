@@ -1,64 +1,83 @@
 package flow;
 
 import java.io.File;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.integration.support.MessageBuilder;
 import org.springframework.integration.transaction.IntegrationResourceHolder;
 import org.springframework.integration.transaction.TransactionSynchronizationProcessor;
 import org.springframework.messaging.Message;
-import org.springframework.messaging.MessageHeaders;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.messaging.MessageChannel;
 
-import data.EingangsDatei;
 import repositories.EingangsDateiRepository;
 
-public class TransaktionsAbschluss implements
-        TransactionSynchronizationProcessor {
-    Logger LOG = LogManager.getLogger(TransaktionsAbschluss.class);
+public class TransaktionsAbschluss implements TransactionSynchronizationProcessor {
+	Logger LOG = LogManager.getLogger(TransaktionsAbschluss.class);
 
-    private File inboundProcessedDirectory;
+	private File processedDirectory;
 
-    private File inboundFailedDirectory;
+	private File failedDirectory;
 
-    private EingangsDateiRepository eingangsDateiRepository;
+	private EingangsDateiRepository eingangsDateiRepository;
 
-    public TransaktionsAbschluss(File inboundProcessedDirectory,
-            File inboundFailedDirectory,
-            EingangsDateiRepository eingangsDateiRepository) {
-        super();
-        this.inboundProcessedDirectory = inboundProcessedDirectory;
-        this.inboundFailedDirectory = inboundFailedDirectory;
-        this.eingangsDateiRepository = eingangsDateiRepository;
-    }
+	private MessageChannel processedChannel;
 
-    @Override
-    public void processBeforeCommit(IntegrationResourceHolder holder) {
-    }
+	private MessageChannel failedChannel;
 
-    @Override
-    public void processAfterCommit(IntegrationResourceHolder holder) {
-        verschiebeDatei(holder, inboundProcessedDirectory);
-    }
+	private MoveFileExecutor moveFile = new MoveFileExecutor();
 
-    @Override
-    public void processAfterRollback(IntegrationResourceHolder holder) {
-        verschiebeDatei(holder, inboundFailedDirectory);
-    }
+	public TransaktionsAbschluss(File processedDirectory, MessageChannel processedChannel, File failedDirectory,
+			MessageChannel failedChannel, EingangsDateiRepository eingangsDateiRepository) {
+		super();
+		this.processedDirectory = processedDirectory;
+		this.failedDirectory = failedDirectory;
+		this.eingangsDateiRepository = eingangsDateiRepository;
+		this.processedChannel = processedChannel;
+		this.failedChannel = failedChannel;
+	}
 
-    protected void verschiebeDatei(IntegrationResourceHolder holder,
-            File directory) {
-        Message<?> message = holder.getMessage();
-        if (message != null) {
-            LOG.debug("Message " + message);
-            File file = (File) message.getPayload();
-            LOG.debug("File " + file.getAbsolutePath());
-            File ziel = new File(directory.getPath() + File.separator
-                    + file.getName());
-            file.renameTo(ziel);
-            LOG.debug("verschoben nach " + ziel.getAbsolutePath());
+	@Override
+	public void processBeforeCommit(IntegrationResourceHolder holder) {
+	}
 
-        }
-    }
+	@Override
+	public void processAfterCommit(IntegrationResourceHolder holder) {
+		LOG.debug("ProcessedDirectory: " + processedDirectory);
+		LOG.debug("Holder: " + holder);
+		LOG.debug("Holder Message: " + holder.getMessage());
+		LOG.debug("Holder Attributes: " + holder.getAttributes());
+		sendHolderToChannel(holder, processedChannel, processedDirectory);
+	}
+
+	private void sendHolderToChannel(IntegrationResourceHolder holder, MessageChannel channel, File directory) {
+		Message msg = holder.getMessage();
+		if (msg != null) {
+			File file = moveFile.verschiebeDatei(msg, directory);
+			sendMessageToChannel(file, channel);
+		}
+	}
+
+	@Override
+	public void processAfterRollback(IntegrationResourceHolder holder) {
+		sendHolderToChannel(holder, failedChannel, failedDirectory);
+	}
+
+	private void sendMessageToChannel(File file, MessageChannel channel) {
+		if (file != null) {
+			sendMessage(file, channel);
+		} else {
+			sendMessage(file, failedChannel);
+		}
+	}
+
+	private void sendMessage(File file, MessageChannel channel) {
+		if (channel != null) {
+			LOG.debug("File: " + file + " to " + channel);
+			Message msg =MessageBuilder.withPayload((file==null) ? "NN" : file).build();
+			channel.send(msg);
+		}
+	}
 
 }

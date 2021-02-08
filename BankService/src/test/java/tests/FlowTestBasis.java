@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -75,11 +76,10 @@ public class FlowTestBasis extends AsyncTest {
         Files.createDirectories(inboundFailedDirectory.toPath());
         Files.createDirectories(inboundOutDirectory.toPath());
         
-        Files.copy(Paths.get("./src/test/resources/kontoauszug.xml"),
-                new FileOutputStream(inboundReadDirectory.getAbsolutePath()
-                        + "/kontoauszug.xml"));
+        copy("./src/test/resources/kontoauszug.xml");
     }
-
+    
+ 
     @Transactional
     public void cleanDatenbank() {
         eingangsDateiRepository.deleteAll();

@@ -49,13 +49,13 @@ import flow.KontoauszugsSplitter;
         "flow", "batch" })
 @EnableJpaRepositories({ "repositories" })
 @EntityScan({ "data", "ausgang" })
-public class IntegrationUndBatchZusammen extends BankEingangMitKlassen { // FilePollerFlow {
+public class IntegrationUndBatchZusammen extends BankEingangMitKlassen { 
+	// FilePollerFlow {
     
     @Autowired
     public JobLauncher jobLauncher;
     
-    @Bean
-    @Qualifier("myGateway")
+    @Bean(name="myGateway")
     public MessageHandler jobLaunchingGateway() {
         return new JobLaunchingGateway(jobLauncher);
     }
@@ -98,16 +98,9 @@ public class IntegrationUndBatchZusammen extends BankEingangMitKlassen { // File
             MessageHandler jobLaunchingGateway) {
             return processFileFlowBuilder(taskExecutor, fileReadingMessageSource,
                         applicationContext).transform(name -> new File(name.toString())).
-                        transform("makeJobLunchRequest").handle(jobLaunchingGateway).get();
+                        transform((File f)-> makeJobLunchRequest(f)).handle(jobLaunchingGateway).get();
     }
  
-    /*
-    public IntegrationUndBatchZusammen(String filePattern) {
-        super("*.xml");
-    }
-
-     
-
-    */
+ 
     
 }

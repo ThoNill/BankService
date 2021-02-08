@@ -12,7 +12,7 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.support.ChannelInterceptorAdapter;
 
-public class AsyncTest {
+public class AsyncTest extends CopyHelper{
 
     public AsyncTest() {
         super();
