@@ -98,7 +98,7 @@ public class IntegrationUndBatchZusammen extends BankEingangMitKlassen {
             MessageHandler jobLaunchingGateway) {
             return processFileFlowBuilder(taskExecutor, fileReadingMessageSource,
                         applicationContext).transform(name -> new File(name.toString())).
-                        transform((File f)-> makeJobLunchRequest(f)).handle(jobLaunchingGateway).get();
+                        transform("makeJobLunchRequest").handle(jobLaunchingGateway).get();
     }
  
  
